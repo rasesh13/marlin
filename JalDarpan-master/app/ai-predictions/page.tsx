@@ -1,54 +1,36 @@
 "use client"
 
+import { BrainCircuit, Dna, Eye, FileCheck2, ScanSearch, ShieldCheck } from "lucide-react"
 import { TopNavigation } from "@/components/top-navigation"
 import { OtolithClassifier } from "@/components/ai/otolith-classifier"
 import { DNASequencer } from "@/components/ai/dna-sequencer"
+import { MetricTile, PageIntro, SectionHeading } from "@/components/page-chrome"
 
 export default function AIPredictionsPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <TopNavigation />
+      <main className="page-shell">
+        <PageIntro eyebrow="Marine AI laboratory" title="Turn biological evidence into identification." description="Two specialist AI workflows connect visual otolith morphology and DNA barcodes to transparent, confidence-scored species matches." icon={BrainCircuit} accent="#a986ff" action={{ label: "Review biodiversity", href: "/biodiversity" }} meta="Human-in-the-loop analysis" />
 
-      <div>
-        <main className="p-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-foreground mb-2">AI Prediction Modules</h1>
-              <p className="text-muted-foreground">
-                Advanced AI-powered tools for marine species identification and analysis
-              </p>
-            </div>
+        <section className="mt-7 grid gap-4 md:grid-cols-3">
+          <MetricTile label="Model confidence" value="94%" detail="Top otolith classification confidence in recent runs" icon={ScanSearch} tone="aqua" />
+          <MetricTile label="Reference library" value="18.4K" detail="Marine species and validated genetic records" icon={Dna} tone="blue" />
+          <MetricTile label="Explainability" value="Enabled" detail="Every result includes evidence, source and confidence" icon={ShieldCheck} tone="lime" />
+        </section>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <OtolithClassifier />
-              <DNASequencer />
-            </div>
+        <section className="mt-12">
+          <SectionHeading eyebrow="Identification workbench" title="Choose an evidence pathway" detail="Image morphology · DNA barcode" />
+          <div className="grid gap-5 lg:grid-cols-2"><OtolithClassifier /><DNASequencer /></div>
+        </section>
 
-            {/* Information Section */}
-            <div className="mt-12 bg-card rounded-lg p-6 border border-border">
-              <h2 className="text-xl font-semibold text-foreground mb-4">About AI Predictions</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="font-medium text-foreground mb-2">Otolith Classification</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Otoliths are calcium carbonate structures found in fish inner ears. Their unique shapes and growth
-                    patterns can be used to identify species, age, and environmental conditions. Our AI model analyzes
-                    otolith images to provide accurate species identification.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-medium text-foreground mb-2">DNA Sequence Analysis</h3>
-                  <p className="text-sm text-muted-foreground">
-                    DNA barcoding uses short genetic sequences to identify species. Our system compares input sequences
-                    against a comprehensive database of marine species to find the closest genetic matches, enabling
-                    precise taxonomic identification.
-                  </p>
-                </div>
-              </div>
-            </div>
+        <section className="mt-12">
+          <SectionHeading eyebrow="How it works" title="Research-grade, reviewable outputs" detail="Decision support — not a black box" />
+          <div className="grid gap-4 md:grid-cols-3">
+            {[{ icon: Eye, number: "01", title: "Capture evidence", text: "Upload a clear otolith image or paste a cleaned DNA barcode sequence." }, { icon: BrainCircuit, number: "02", title: "Model comparison", text: "MARLIN compares the evidence against curated marine reference libraries." }, { icon: FileCheck2, number: "03", title: "Review the match", text: "Inspect ranked results, confidence, taxonomic context and provenance before use." }].map((step) => <div key={step.number} className="content-surface p-6"><div className="flex items-start justify-between"><div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#a986ff]/10 text-[#b99dff]"><step.icon className="h-5 w-5" /></div><span className="font-mono text-xs text-[#557c8c]">{step.number}</span></div><h3 className="mt-6 text-lg font-semibold text-white">{step.title}</h3><p className="mt-2 text-sm leading-6 text-[#789baa]">{step.text}</p></div>)}
           </div>
-        </main>
-      </div>
+        </section>
+      </main>
     </div>
   )
 }

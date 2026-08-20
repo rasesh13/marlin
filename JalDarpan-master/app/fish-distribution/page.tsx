@@ -1,174 +1,62 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { Anchor, Fish, MapPin, Radar, TrendingUp } from "lucide-react"
 import { TopNavigation } from "@/components/top-navigation"
 import { FishDistributionChart } from "@/components/charts/fish-distribution-chart"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Fish, MapPin, TrendingUp } from "lucide-react"
+import { LoadingScreen, MetricTile, PageIntro, SectionHeading } from "@/components/page-chrome"
 
-interface FishData {
-  species: string
-  abundance: number
-  region: string
-}
+interface FishData { species: string; abundance: number; region: string }
 
 export default function FishDistributionPage() {
   const [fishData, setFishData] = useState<FishData[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/fish-data")
-        const result = await response.json()
-
-        if (result.success) {
-          setFishData(result.data)
-        }
-      } catch (error) {
-        console.error("Failed to fetch fish data:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
+    fetch("/api/fish-data").then((response) => response.json()).then((result) => {
+      if (result.success) setFishData(result.data)
+    }).catch((error) => console.error("Failed to fetch fish data:", error)).finally(() => setLoading(false))
   }, [])
 
-  const totalAbundance = fishData.reduce((sum, fish) => sum + fish.abundance, 0)
-  const topSpecies = [...fishData].sort((a, b) => b.abundance - a.abundance).slice(0, 3)
-  const regionCounts = fishData.reduce(
-    (acc, fish) => {
-      acc[fish.region] = (acc[fish.region] || 0) + 1
-      return acc
-    },
-    {} as Record<string, number>,
-  )
+  if (loading) return <LoadingScreen label="Resolving fisheries observations" />
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading fish distribution data...</p>
-        </div>
-      </div>
-    )
-  }
+  const total = fishData.reduce((sum, fish) => sum + fish.abundance, 0)
+  const topSpecies = [...fishData].sort((a, b) => b.abundance - a.abundance).slice(0, 4)
+  const regionCounts = fishData.reduce((acc, fish) => ({ ...acc, [fish.region]: (acc[fish.region] || 0) + 1 }), {} as Record<string, number>)
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <TopNavigation />
+      <main className="page-shell">
+        <PageIntro eyebrow="Fisheries intelligence" title="From catch records to sustainable decisions." description="Track species abundance, regional distribution and stock signals in one evidence-ready fisheries workspace." icon={Fish} accent="#6aa9ff" action={{ label: "Explore fishing zones", href: "/map" }} meta="Regional stock picture" />
 
-      <div>
-        <main className="p-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-foreground mb-2">Fish Distribution Analysis</h1>
-              <p className="text-muted-foreground">
-                Species abundance and distribution patterns across different marine regions
-              </p>
-            </div>
+        <section className="mt-7 grid gap-4 md:grid-cols-3">
+          <MetricTile label="Observed abundance" value={total.toLocaleString("en-IN")} detail="Individuals represented in current survey data" icon={Fish} tone="aqua" />
+          <MetricTile label="Species tracked" value={fishData.length} detail="Priority commercial and ecosystem indicator species" icon={Radar} tone="blue" />
+          <MetricTile label="Marine regions" value={Object.keys(regionCounts).length} detail="Survey regions contributing active records" icon={MapPin} tone="amber" />
+        </section>
 
-            {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <Fish className="w-5 h-5 text-chart-1" />
-                    Total Abundance
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-foreground">{totalAbundance.toLocaleString()}</div>
-                  <p className="text-sm text-muted-foreground">Individual fish counted</p>
-                </CardContent>
-              </Card>
+        <section className="mt-12">
+          <SectionHeading eyebrow="Distribution intelligence" title="Species abundance by region" detail="Current observation set" />
+          <FishDistributionChart data={fishData} />
+        </section>
 
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <TrendingUp className="w-5 h-5 text-chart-2" />
-                    Species Tracked
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-foreground">{fishData.length}</div>
-                  <p className="text-sm text-muted-foreground">Different species monitored</p>
-                </CardContent>
-              </Card>
+        <section className="mt-12 grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
+          <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><TrendingUp className="h-5 w-5 text-[#52e5d5]" /> Leading species</CardTitle><CardDescription>Ranked by observed abundance across the network</CardDescription></CardHeader>
+            <CardContent className="space-y-3">{topSpecies.map((species, index) => {
+              const width = Math.max(14, Math.round((species.abundance / (topSpecies[0]?.abundance || 1)) * 100))
+              return <div key={species.species} className="rounded-xl border border-white/[0.07] bg-white/[0.02] p-4"><div className="flex items-center gap-3"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#52e5d5]/10 text-xs font-bold text-[#52e5d5]">0{index + 1}</span><div className="min-w-0 flex-1"><div className="flex justify-between gap-3"><p className="truncate font-semibold text-white">{species.species}</p><p className="font-mono text-sm text-[#9fc0cb]">{species.abundance.toLocaleString("en-IN")}</p></div><div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.05]"><div className="h-full rounded-full bg-gradient-to-r from-[#52e5d5] to-[#6aa9ff]" style={{ width: `${width}%` }} /></div><p className="mt-2 text-[10px] uppercase tracking-wider text-[#668c9b]">{species.region}</p></div></div></div>
+            })}</CardContent>
+          </Card>
 
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <MapPin className="w-5 h-5 text-chart-3" />
-                    Regions Covered
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-foreground">{Object.keys(regionCounts).length}</div>
-                  <p className="text-sm text-muted-foreground">Marine regions surveyed</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Chart */}
-            <div className="mb-8">
-              <FishDistributionChart data={fishData} />
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Top Species */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Most Abundant Species</CardTitle>
-                  <CardDescription>Top 3 species by population count</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {topSpecies.map((species, index) => (
-                      <div key={species.species} className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-medium text-primary">#{index + 1}</span>
-                          </div>
-                          <div>
-                            <p className="font-medium text-foreground">{species.species}</p>
-                            <p className="text-sm text-muted-foreground">{species.region}</p>
-                          </div>
-                        </div>
-                        <Badge variant="secondary">{species.abundance.toLocaleString()}</Badge>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Regional Distribution */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Regional Distribution</CardTitle>
-                  <CardDescription>Species count by marine region</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {Object.entries(regionCounts).map(([region, count]) => (
-                      <div key={region} className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <MapPin className="w-4 h-4 text-muted-foreground" />
-                          <span className="font-medium text-foreground">{region}</span>
-                        </div>
-                        <Badge variant="outline">{count} species</Badge>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </main>
-      </div>
+          <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><Anchor className="h-5 w-5 text-[#6aa9ff]" /> Regional coverage</CardTitle><CardDescription>Species representation by marine survey area</CardDescription></CardHeader>
+            <CardContent className="space-y-2">{Object.entries(regionCounts).map(([region, count], index) => <div key={region} className="flex items-center justify-between rounded-xl border border-white/[0.06] px-4 py-3"><div className="flex items-center gap-3"><span className="h-2 w-2 rounded-full" style={{ backgroundColor: ["#52e5d5", "#6aa9ff", "#b9ec71", "#ffc46b"][index % 4] }} /><span className="text-sm font-medium text-[#d9edf2]">{region}</span></div><span className="rounded-lg bg-white/[0.04] px-2.5 py-1 font-mono text-xs text-[#8fb0bc]">{count} species</span></div>)}</CardContent>
+          </Card>
+        </section>
+      </main>
     </div>
   )
 }
