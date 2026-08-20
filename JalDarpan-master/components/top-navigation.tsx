@@ -4,11 +4,12 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BarChart3, Bell, Brain, Fish, Home, LogOut, MapPin, Menu, Radio, User, Waves, X } from "lucide-react"
+import { BarChart3, Bell, Brain, Fish, Home, LogOut, MapPin, Menu, Radio, SquareGanttChart, User, Waves, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navigation = [
   { name: "Command", href: "/", icon: Home },
+  { name: "Workflows", href: "/workflows", icon: SquareGanttChart },
   { name: "Ocean", href: "/ocean-data", icon: Waves },
   { name: "Fisheries", href: "/fish-distribution", icon: Fish },
   { name: "Biodiversity", href: "/biodiversity", icon: BarChart3 },
