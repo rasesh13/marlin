@@ -95,7 +95,7 @@ export function RealTimeAlerts() {
   return (
     <Card id="alerts">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <CardTitle className="flex items-center gap-2">
             <Bell className="w-5 h-5" />
             Real-Time Alerts
@@ -121,14 +121,14 @@ export function RealTimeAlerts() {
             return (
               <div
                 key={alert.id}
-                  className={`border border-white/10 border-l-2 ${getSeverityColor(alert.severity)} bg-[#08263c] p-4`}
+                  className={`rounded-xl border border-[#e1eae8] border-l-2 ${getSeverityColor(alert.severity)} bg-[#f8fbfa] p-4`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3">
                     <Icon className="w-5 h-5 mt-0.5" />
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-semibold text-white">{alert.title}</h4>
+                        <h4 className="font-semibold text-[#153d46]">{alert.title}</h4>
                         <Badge variant={alert.severity === "critical" ? "destructive" : "secondary"}>
                           {alert.severity}
                         </Badge>

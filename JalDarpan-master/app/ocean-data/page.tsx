@@ -44,14 +44,14 @@ export default function OceanDataPage() {
         <section className="mt-12">
           <SectionHeading eyebrow="Validated observations" title="Recent network measurements" detail={`${oceanData.length} records loaded`} />
           <Card className="data-table">
-            <CardHeader className="border-b border-white/[0.07]">
+            <CardHeader className="border-b border-[#e1eae8]">
               <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#52e5d5]/10 text-[#52e5d5]"><Activity className="h-5 w-5" /></div><div><CardTitle>Observation log</CardTitle><CardDescription>Latest calibrated readings from connected monitoring stations</CardDescription></div></div>
             </CardHeader>
             <CardContent className="px-0">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[700px] text-sm">
                   <thead><tr><th className="px-6 py-4 text-left">Date</th><th className="px-6 py-4 text-left">Temperature</th><th className="px-6 py-4 text-left">Salinity</th><th className="px-6 py-4 text-left">Chlorophyll-a</th><th className="px-6 py-4 text-left">Quality</th></tr></thead>
-                  <tbody>{oceanData.slice(-10).reverse().map((data, index) => <tr key={`${data.date}-${index}`} className="border-t border-white/[0.06]"><td className="px-6 py-4 font-medium text-white">{new Date(data.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</td><td className="px-6 py-4 text-[#a5c1cb]">{data.temperature} °C</td><td className="px-6 py-4 text-[#a5c1cb]">{data.salinity} PSU</td><td className="px-6 py-4 text-[#a5c1cb]">{data.chlorophyll} mg/m³</td><td className="px-6 py-4"><span className="inline-flex items-center gap-2 rounded-full bg-[#79f2a4]/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#79f2a4]"><span className="h-1.5 w-1.5 rounded-full bg-current" /> Verified</span></td></tr>)}</tbody>
+                  <tbody>{oceanData.slice(-10).reverse().map((data, index) => <tr key={`${data.date}-${index}`} className="border-t border-[#e7eeed]"><td className="px-6 py-4 font-medium text-[#153d46]">{new Date(data.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</td><td className="px-6 py-4 text-[#6c8489]">{data.temperature} °C</td><td className="px-6 py-4 text-[#6c8489]">{data.salinity} PSU</td><td className="px-6 py-4 text-[#6c8489]">{data.chlorophyll} mg/m³</td><td className="px-6 py-4"><span className="inline-flex items-center gap-2 rounded-full bg-[#2d9c6c]/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#25845e]"><span className="h-1.5 w-1.5 rounded-full bg-current" /> Verified</span></td></tr>)}</tbody>
                 </table>
               </div>
             </CardContent>

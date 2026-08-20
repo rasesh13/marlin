@@ -32,9 +32,9 @@ export function BiodiversityChart({ data }: BiodiversityChartProps) {
   const total = data.pelagic + data.benthic + data.crustaceans + data.others
 
   return (
-    <Card className="border-white/10 bg-[#092b43] shadow-[0_8px_30px_rgba(0,0,0,0.16)]">
-      <CardHeader className="border-b border-white/10 bg-[#0b3a5b]/40 pb-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#6c9fe8]">Ecosystem composition</p>
+    <Card className="border-[#d9e6e5] bg-white shadow-[0_18px_55px_rgba(29,68,75,.07)]">
+      <CardHeader className="border-b border-[#e2ebe9] bg-[#f5f9f8] pb-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#2f66b6]">Ecosystem composition</p>
         <CardTitle className="text-lg">Biodiversity breakdown</CardTitle>
         <CardDescription>Distribution of marine life categories</CardDescription>
       </CardHeader>
@@ -60,10 +60,10 @@ export function BiodiversityChart({ data }: BiodiversityChartProps) {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
+                    backgroundColor: "var(--card)",
+                    border: "1px solid var(--border)",
                     borderRadius: "8px",
-                    color: "hsl(var(--card-foreground))",
+                    color: "var(--card-foreground)",
                   }}
                   formatter={(value: number) => [`${value} species (${((value / total) * 100).toFixed(1)}%)`, "Count"]}
                 />

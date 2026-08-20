@@ -1,206 +1,101 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
+import { ArrowRight, ArrowUpRight, BrainCircuit, Database, Fish, Globe2, Leaf, MapPin, Radio, ShieldCheck, Sparkles, Waves } from "lucide-react"
 import { TopNavigation } from "@/components/top-navigation"
 import { OceanParametersChart } from "@/components/charts/ocean-parameters-chart"
 import { FishDistributionChart } from "@/components/charts/fish-distribution-chart"
-import { BiodiversityChart } from "@/components/charts/biodiversity-chart"
 import { RealTimeAlerts } from "@/components/real-time-alerts"
 import { PredictiveAnalytics } from "@/components/predictive-analytics"
-import { QuickActions } from "@/components/quick-actions"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowUpRight, Radio } from "lucide-react"
-import { DataGlobe, EarlyWarningAndProvenance, IntelligenceMetricCards, LiveIntelligenceStrip, MarineAIAndHealth } from "@/components/marine-intelligence-sections"
-import { LoadingScreen } from "@/components/page-chrome"
+import { DataGlobe, MarineAIAndHealth } from "@/components/marine-intelligence-sections"
+import { LoadingScreen, SectionHeading } from "@/components/page-chrome"
 
-interface OceanData {
-  date: string
-  temperature: number
-  salinity: number
-  chlorophyll: number
-}
+interface OceanData { date: string; temperature: number; salinity: number; chlorophyll: number }
+interface FishData { species: string; abundance: number; region: string }
 
-interface FishData {
-  species: string
-  abundance: number
-  region: string
-}
-
-interface BiodiversityData {
-  pelagic: number
-  benthic: number
-  crustaceans: number
-  others: number
-}
-
-interface AIPrediction {
-  id: number
-  type: string
-  species: string
-  confidence: number
-  timestamp: string
-}
+const domains = [
+  { title: "Ocean state", eyebrow: "Observe", text: "Temperature, salinity, oxygen and chlorophyll in one continuous picture.", href: "/ocean-data", icon: Waves, color: "#007f83", tint: "#dff6f3" },
+  { title: "Fisheries", eyebrow: "Understand", text: "Species distribution, stock signals and potential fishing-zone context.", href: "/fish-distribution", icon: Fish, color: "#2f66b6", tint: "#e7efff" },
+  { title: "Biodiversity", eyebrow: "Protect", text: "Species records, ecosystem composition and molecular intelligence.", href: "/biodiversity", icon: Leaf, color: "#4f7a31", tint: "#edf7e5" },
+]
 
 export default function DashboardPage() {
   const [oceanData, setOceanData] = useState<OceanData[]>([])
   const [fishData, setFishData] = useState<FishData[]>([])
-  const [biodiversityData, setBiodiversityData] = useState<BiodiversityData | null>(null)
-  const [aiPredictions, setAIPredictions] = useState<AIPrediction[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [oceanRes, fishRes, biodiversityRes, aiRes] = await Promise.all([
-          fetch("/api/ocean-data"),
-          fetch("/api/fish-data"),
-          fetch("/api/biodiversity-data"),
-          fetch("/api/ai-predictions"),
-        ])
-
-        const [oceanResult, fishResult, biodiversityResult, aiResult] = await Promise.all([
-          oceanRes.json(),
-          fishRes.json(),
-          biodiversityRes.json(),
-          aiRes.json(),
-        ])
-
+    Promise.all([fetch("/api/ocean-data"), fetch("/api/fish-data")])
+      .then(async ([ocean, fish]) => Promise.all([ocean.json(), fish.json()]))
+      .then(([oceanResult, fishResult]) => {
         if (oceanResult.success) setOceanData(oceanResult.data)
         if (fishResult.success) setFishData(fishResult.data)
-        if (biodiversityResult.success) setBiodiversityData(biodiversityResult.data)
-        if (aiResult.success) setAIPredictions(aiResult.data)
-      } catch (error) {
-        console.error("Failed to fetch data:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
+      })
+      .catch((error) => console.error("Failed to fetch marine data:", error))
+      .finally(() => setLoading(false))
   }, [])
 
-  // Calculate stats from data
-  const avgTemperature =
-    oceanData.length > 0
-      ? Math.round((oceanData.reduce((sum, d) => sum + d.temperature, 0) / oceanData.length) * 10) / 10
-      : 21.3
-
-  const avgSalinity =
-    oceanData.length > 0
-      ? Math.round((oceanData.reduce((sum, d) => sum + d.salinity, 0) / oceanData.length) * 10) / 10
-      : 35.2
-
-  const speciesCount = fishData.reduce((sum, d) => sum + d.abundance, 0) || 1247
-
-  const biodiversityIndex = biodiversityData
-    ? Math.round(
-        ((biodiversityData.pelagic +
-          biodiversityData.benthic +
-          biodiversityData.crustaceans +
-          biodiversityData.others) /
-          50) *
-          10,
-      ) / 10
-    : 8.7
-
-  if (loading) {
-    return <LoadingScreen label="Building the marine operating picture" />
-  }
+  if (loading) return <LoadingScreen label="Connecting to the marine network" />
 
   return (
     <div className="min-h-screen">
       <TopNavigation />
-
-      <main className="page-shell">
-        <div>
-          <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#062b49] px-6 py-10 text-white shadow-[0_35px_100px_rgba(0,0,0,.32)] md:px-10 md:py-14 lg:px-14">
-            <div className="page-hero-grid" />
-            <div className="absolute -right-36 -top-36 h-[420px] w-[420px] rounded-full bg-[#52e5d5]/10 blur-3xl" />
-            <div className="relative grid items-center gap-10 lg:grid-cols-[1fr_0.9fr]">
-              <div>
-                <div className="eyebrow mb-6"><span className="live-dot" /> National marine intelligence platform</div>
-                <h1 className="max-w-2xl text-balance text-5xl font-semibold leading-[.98] tracking-[-0.055em] md:text-7xl">India&apos;s ocean,<br /><span className="bg-gradient-to-r from-[#52e5d5] via-[#a7f4ea] to-[#6aa9ff] bg-clip-text text-transparent">made visible.</span></h1>
-                <p className="mt-6 max-w-xl text-base leading-7 text-[#9dbcca] md:text-lg">MARLIN unifies ocean observations, fisheries, biodiversity and AI into one trusted operating picture for faster, evidence-led decisions.</p>
-                <div className="mt-8 flex flex-wrap gap-3"><Link href="/map" className="primary-action">Explore live map <ArrowUpRight className="h-4 w-4" /></Link><Link href="/ai-predictions" className="inline-flex h-11 items-center gap-2 rounded-xl border border-white/15 bg-white/[0.035] px-5 text-sm font-semibold text-white transition hover:border-[#52e5d5]/35 hover:bg-white/[0.07]"><Radio className="h-4 w-4 text-[#52e5d5]" /> Open AI lab</Link></div>
-                <div className="mt-7 border-t border-white/10 pt-4"><p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#13c8d8]">Live ocean snapshot · Demo Data</p><div className="mt-3 grid grid-cols-2 gap-x-5 gap-y-3 sm:grid-cols-4">{[["SST", "28.2°C"], ["Salinity", "34.8 PSU"], ["Dissolved O₂", "6.1 mg/L"], ["Biodiversity", "8.7"]].map(([label, value]) => <div key={label}><p className="text-[10px] uppercase tracking-wider text-[#8fb6c4]">{label}</p><p className="mt-1 text-sm font-semibold text-white">{value}</p></div>)}</div></div>
-                <div className="mt-7 grid grid-cols-1 gap-3 text-[10px] uppercase tracking-[0.12em] text-[#8fb6c4] sm:grid-cols-3"><div><p>Region</p><p className="mt-1 normal-case tracking-normal text-[#d7f6f2]">India &amp; surrounding waters</p></div><div><p>Sources</p><p className="mt-1 normal-case tracking-normal text-[#d7f6f2]">CMLRE · INCOIS · IndOBIS</p></div><div><p>Last synchronized</p><p className="mt-1 normal-case tracking-normal text-[#d7f6f2]">20 Aug 2026 · 14:30 IST</p></div></div>
+      <main>
+        <section className="relative isolate min-h-[690px] overflow-hidden bg-[#031b2a] text-white lg:min-h-[720px]">
+          <Image src="/marine-intelligence-hero.png" alt="Satellite view of India and the Indian Ocean with marine data signals" fill priority sizes="100vw" className="object-cover object-center" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(1,18,31,.96)_0%,rgba(1,21,35,.84)_34%,rgba(1,24,39,.25)_68%,rgba(1,21,35,.18)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_50%,rgba(1,18,30,.72)_100%)]" />
+          <div className="relative mx-auto flex min-h-[690px] max-w-[1480px] flex-col justify-between px-5 py-16 sm:px-8 lg:min-h-[720px] lg:px-12 lg:py-20">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#b7fff3] backdrop-blur"><span className="h-1.5 w-1.5 rounded-full bg-[#7effc2] shadow-[0_0_10px_#7effc2]" /> India&apos;s marine intelligence network</div>
+              <h1 className="mt-7 max-w-xl text-balance text-[3.4rem] font-semibold leading-[.93] tracking-[-0.065em] sm:text-7xl lg:text-[5.5rem]">The ocean is speaking.</h1>
+              <p className="mt-7 max-w-xl text-lg leading-8 text-[#c3d9e0]">MARLIN turns millions of scattered ocean, fisheries and biodiversity records into one clear, trusted decision layer.</p>
+              <div className="mt-9 flex flex-wrap gap-3">
+                <Link href="/map" className="inline-flex h-12 items-center gap-2 rounded-full bg-[#65ead9] px-6 text-sm font-bold text-[#03212c] shadow-[0_14px_40px_rgba(83,231,214,.2)] transition hover:-translate-y-0.5 hover:bg-[#8bf4e7]">Explore the living map <ArrowUpRight className="h-4 w-4" /></Link>
+                <Link href="/ai-predictions" className="inline-flex h-12 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"><Sparkles className="h-4 w-4 text-[#9cefe6]" /> Ask MARLIN</Link>
               </div>
-              <div className="relative flex justify-center"><DataGlobe /></div>
+            </div>
+
+            <div className="mt-14 grid max-w-4xl grid-cols-2 overflow-hidden rounded-2xl border border-white/15 bg-[#021826]/65 backdrop-blur-xl md:grid-cols-4">
+              {[["28.2°C", "Sea surface"], ["326", "Active sensors"], ["18,420", "Species records"], ["3", "Elevated alerts"]].map(([value, label], index) => <div key={label} className="border-white/10 p-4 even:border-l md:border-l md:first:border-l-0 lg:p-5"><div className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full ${index === 3 ? "bg-[#ff9b87]" : "bg-[#6bf0dc]"}`} /><p className="text-xl font-semibold tracking-[-0.03em] md:text-2xl">{value}</p></div><p className="mt-1 text-[9px] font-bold uppercase tracking-[0.15em] text-[#8caab4]">{label}</p></div>)}
+            </div>
+          </div>
+        </section>
+
+        <div className="mx-auto max-w-[1480px] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+          <section>
+            <div className="max-w-3xl"><p className="eyebrow-plain">One source of marine truth</p><h2 className="mt-4 text-balance text-4xl font-semibold leading-tight tracking-[-0.045em] text-[#062a36] md:text-6xl">From raw observations to decisions that matter.</h2></div>
+            <div className="mt-10 grid gap-4 lg:grid-cols-3">
+              {domains.map((domain) => <Link key={domain.title} href={domain.href} className="group relative overflow-hidden rounded-[1.75rem] border border-[#d9e6e5] bg-white p-7 shadow-[0_18px_60px_rgba(25,61,70,.07)] transition duration-300 hover:-translate-y-1.5 hover:shadow-[0_24px_70px_rgba(25,61,70,.12)]"><div className="absolute -right-12 -top-12 h-36 w-36 rounded-full" style={{ background: domain.tint }} /><div className="relative"><div className="flex items-start justify-between"><div className="flex h-12 w-12 items-center justify-center rounded-2xl" style={{ background: domain.tint, color: domain.color }}><domain.icon className="h-6 w-6" /></div><ArrowUpRight className="h-5 w-5 text-[#9eb3b6] transition group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-[#062a36]" /></div><p className="mt-8 text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: domain.color }}>{domain.eyebrow}</p><h3 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-[#062a36]">{domain.title}</h3><p className="mt-3 max-w-sm text-sm leading-6 text-[#647f85]">{domain.text}</p></div></Link>)}
             </div>
           </section>
 
-          <div className="relative -mt-1 overflow-hidden rounded-b-2xl border-x border-b border-white/[0.08]"><LiveIntelligenceStrip /></div>
-
-          <div className="space-y-16 pt-14">
-            <section><div className="mb-5"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#13c8d8]">Platform domains</p><h2 className="mt-2 font-display text-2xl font-semibold text-white">Marine data, fisheries and biodiversity</h2></div><div className="grid gap-4 md:grid-cols-3">{[["Marine Data", "Oceanographic observations", "SST · Salinity · Dissolved oxygen · Chlorophyll"], ["Fisheries", "Catch & stock intelligence", "Species distribution · PFZ · Catch trends"], ["Biodiversity", "Marine life & molecular intelligence", "Species records · eDNA · Distribution"]].map(([title, subtitle, detail]) => <div key={title} className="border-l-2 border-[#13c8d8] bg-[#092b43] px-5 py-4"><h3 className="font-display text-lg font-semibold text-white">{title}</h3><p className="mt-1 text-sm text-[#b8d7df]">{subtitle}</p><p className="mt-3 text-xs leading-5 text-[#8fb6c4]">{detail}</p></div>)}</div></section>
-
-            <section><div className="mb-5 flex items-end justify-between"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#13c8d8]">Geospatial observations</p><h2 className="mt-2 font-display text-2xl font-semibold text-white">Marine Intelligence Map</h2></div><span className="text-xs text-[#8fb6c4]">24H · 7D · 30D · 1Y</span></div><div className="grid gap-0 border border-white/10 bg-[#092b43] lg:grid-cols-[1.65fr_0.85fr]"><div className="min-h-[300px] p-4"><DataGlobe /></div><div className="border-t border-white/10 p-6 lg:border-l lg:border-t-0"><p className="text-xs uppercase tracking-[0.14em] text-[#8fb6c4]">Selected region</p><h3 className="mt-2 font-display text-2xl font-semibold text-white">Arabian Sea</h3><dl className="mt-6 grid grid-cols-2 gap-y-5 text-sm"><div><dt className="text-xs text-[#8fb6c4]">Temperature</dt><dd className="mt-1 font-semibold text-white">28.2°C</dd></div><div><dt className="text-xs text-[#8fb6c4]">Salinity</dt><dd className="mt-1 font-semibold text-white">34.8 PSU</dd></div><div><dt className="text-xs text-[#8fb6c4]">Biodiversity records</dt><dd className="mt-1 font-semibold text-white">4,820</dd></div><div><dt className="text-xs text-[#8fb6c4]">Risk</dt><dd className="mt-1 font-semibold text-[#27d3c2]">Low</dd></div></dl><p className="mt-6 border-t border-white/10 pt-4 text-xs text-[#8fb6c4]">Source: <span className="text-[#d7f6f2]">INCOIS / CMLRE</span><br />Timestamp: <span className="text-[#d7f6f2]">20 Aug 2026 · 14:30 IST</span></p><Link href="/map" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#13c8d8] hover:text-white">View region <ArrowUpRight className="h-4 w-4" /></Link></div></div></section>
-
-            <section><div className="mb-5 flex items-end justify-between"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#13c8d8]">Ocean intelligence / current view</p><h2 className="mt-2 font-display text-2xl font-semibold text-white">Signals from the water</h2></div><span className="text-xs text-[#8fb6c4]">Live network baseline</span></div><IntelligenceMetricCards /></section>
-
-            <MarineAIAndHealth />
-            <EarlyWarningAndProvenance />
-
-            {/* Top Priority Section - Alerts and Quick Actions */}
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-              <div className="lg:col-span-2">
-                <RealTimeAlerts />
-              </div>
-              <div className="lg:col-span-3">
-                <QuickActions />
+          <section className="mt-24">
+            <SectionHeading eyebrow="Current operating picture" title="What is happening in the water now" detail="Updated 14:30 IST" />
+            <div className="grid gap-5 xl:grid-cols-[1.45fr_.55fr]">
+              <div className="relative overflow-hidden rounded-[2rem] bg-[#041f30] p-3 shadow-[0_28px_80px_rgba(7,37,48,.18)] sm:p-5"><DataGlobe /><div className="mt-3 grid grid-cols-3 divide-x divide-white/10 rounded-xl bg-white/[0.045] py-3 text-center"><div><p className="text-lg font-semibold text-white">42</p><p className="text-[9px] uppercase tracking-wider text-[#789aa7]">Regions</p></div><div><p className="text-lg font-semibold text-white">12</p><p className="text-[9px] uppercase tracking-wider text-[#789aa7]">Sources</p></div><div><p className="text-lg font-semibold text-[#70eedc]">Live</p><p className="text-[9px] uppercase tracking-wider text-[#789aa7]">Network</p></div></div></div>
+              <div className="grid gap-5">
+                <div className="rounded-[2rem] border border-[#ffd9d1] bg-[#fff5f1] p-6"><div className="flex items-start justify-between"><div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#ffe3dc] text-[#d14f3d]"><Radio className="h-5 w-5" /></div><span className="rounded-full bg-white px-3 py-1 text-[9px] font-bold uppercase tracking-wider text-[#d14f3d]">High priority</span></div><p className="mt-8 text-[10px] font-bold uppercase tracking-[0.18em] text-[#d14f3d]">Arabian Sea</p><h3 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-[#3f2825]">Thermal anomaly detected</h3><p className="mt-3 text-sm leading-6 text-[#81645e]">Surface temperature is 1.8°C above the 30-day regional baseline.</p><Link href="/#alerts" className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#9d3e31]">Review the signal <ArrowRight className="h-4 w-4" /></Link></div>
+                <div className="rounded-[2rem] border border-[#d9e6e5] bg-white p-6 shadow-[0_18px_55px_rgba(25,61,70,.06)]"><div className="flex items-center gap-3"><ShieldCheck className="h-5 w-5 text-[#168b7d]" /><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#168b7d]">Trusted intelligence</p></div><h3 className="mt-5 text-xl font-semibold text-[#062a36]">Every insight keeps its source.</h3><div className="mt-5 space-y-3 text-sm">{[[Database,"INCOIS observation"],[BrainCircuit,"HAB model v2.4"],[Globe2,"Arabian Sea · 14:30 IST"]].map(([Icon,label]) => { const I = Icon as typeof Database; return <div key={label as string} className="flex items-center gap-3 rounded-xl bg-[#f1f7f6] px-3 py-2.5 text-[#526e75]"><I className="h-4 w-4 text-[#168b7d]" />{label as string}</div> })}</div></div>
               </div>
             </div>
+          </section>
 
-            {/* Main Analytics Section */}
-            <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.65fr)_minmax(340px,0.9fr)]">
-              <div className="min-w-0">
-                <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">
-                  <OceanParametersChart data={oceanData} />
-                  <FishDistributionChart data={fishData} />
-                </div>
-              </div>
-              <div className="min-w-0">
-                <PredictiveAnalytics />
-              </div>
-            </div>
+          <section className="mt-24 rounded-[2.25rem] bg-[#031f2e] p-4 shadow-[0_35px_100px_rgba(4,38,50,.2)] sm:p-7 lg:p-9"><MarineAIAndHealth /></section>
 
-            {/* Secondary Analytics */}
-            <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">
-              {biodiversityData && <BiodiversityChart data={biodiversityData} />}
+          <section id="alerts" className="mt-24">
+            <SectionHeading eyebrow="Early warning" title="Signals that need attention" detail="Evidence-ranked" />
+            <div className="grid gap-5 lg:grid-cols-[.9fr_1.1fr]"><RealTimeAlerts /><PredictiveAnalytics /></div>
+          </section>
 
-              {/* Recent AI Predictions Card */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent AI Predictions</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {aiPredictions.map((prediction) => (
-                      <div
-                        key={prediction.id}
-                        className="flex items-center justify-between p-4 bg-muted/20 rounded-lg hover:bg-muted/30 transition-colors"
-                      >
-                        <div>
-                          <p className="font-medium text-foreground">
-                            {prediction.type === "otolith_classification"
-                              ? "Otolith Classification"
-                              : "DNA Sequence Match"}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {prediction.species} - {Math.round(prediction.confidence * 100)}% confidence
-                          </p>
-                        </div>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(prediction.timestamp).toLocaleString()}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+          <section className="mt-24">
+            <SectionHeading eyebrow="Network telemetry" title="Explore the evidence behind the picture" detail="30-day view" />
+            <div className="grid gap-5 xl:grid-cols-2"><OceanParametersChart data={oceanData} /><FishDistributionChart data={fishData} /></div>
+          </section>
+
+          <section className="mt-24 overflow-hidden rounded-[2rem] bg-[#0a625f] px-7 py-10 text-white sm:px-10 lg:flex lg:items-center lg:justify-between lg:px-14 lg:py-12"><div><div className="flex items-center gap-2 text-[#abfff1]"><MapPin className="h-4 w-4" /><p className="text-[10px] font-bold uppercase tracking-[0.18em]">The complete operating picture</p></div><h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-[-0.04em] md:text-4xl">See every observation in its geographic context.</h2></div><Link href="/map" className="mt-6 inline-flex h-12 shrink-0 items-center gap-2 rounded-full bg-white px-6 text-sm font-bold text-[#075552] transition hover:-translate-y-0.5 lg:mt-0">Open map explorer <ArrowUpRight className="h-4 w-4" /></Link></section>
         </div>
       </main>
     </div>

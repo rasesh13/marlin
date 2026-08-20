@@ -16,29 +16,29 @@ interface OceanParametersChartProps {
 
 export function OceanParametersChart({ data }: OceanParametersChartProps) {
   return (
-    <Card className="h-full border-white/10 bg-[#092b43] shadow-[0_8px_30px_rgba(0,0,0,0.16)]">
-      <CardHeader className="border-b border-white/10 bg-[#0b3a5b]/40 pb-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#13c8d8]">Environmental sensors</p>
+    <Card className="h-full border-[#d9e6e5] bg-white shadow-[0_18px_55px_rgba(29,68,75,.07)]">
+      <CardHeader className="border-b border-[#e2ebe9] bg-[#f5f9f8] pb-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#087f7b]">Environmental sensors</p>
         <CardTitle className="text-lg">Ocean parameters</CardTitle>
         <CardDescription>30-day trend across the monitoring network</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300} minWidth={0}>
           <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
             <XAxis
               dataKey="date"
-              stroke="hsl(var(--muted-foreground))"
+              stroke="var(--muted-foreground)"
               fontSize={12}
               tickFormatter={(value) => new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
             />
-            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+            <YAxis stroke="var(--muted-foreground)" fontSize={12} />
             <Tooltip
               contentStyle={{
-                backgroundColor: "hsl(var(--card))",
-                border: "1px solid hsl(var(--border))",
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
                 borderRadius: "8px",
-                color: "hsl(var(--card-foreground))",
+                color: "var(--card-foreground)",
               }}
               labelFormatter={(value) => new Date(value).toLocaleDateString()}
             />
