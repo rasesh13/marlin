@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { BarChart3, Bell, Brain, Fish, Home, LogOut, MapPin, Menu, Radio, User, Waves, X } from "lucide-react"
@@ -38,8 +39,8 @@ export function TopNavigation() {
     <header className="sticky top-0 z-50 border-b border-[#dce7e5] bg-white/90 text-[#062a36] shadow-[0_8px_30px_rgba(29,68,75,.06)] backdrop-blur-xl">
       <div className="mx-auto flex h-[72px] max-w-[1480px] items-center gap-4 px-4 sm:px-6 lg:px-8">
         <Link href="/" className="group flex shrink-0 items-center gap-3" aria-label="MARLIN command centre">
-          <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-[#087f7b] shadow-[0_8px_22px_rgba(8,127,123,.18)]">
-            <Waves className="h-5 w-5 text-white transition group-hover:scale-110" />
+          <div className="relative h-11 w-11 overflow-hidden rounded-full bg-[#001a41] shadow-[0_8px_22px_rgba(8,60,127,.22)] ring-1 ring-[#155c9d]/20">
+            <Image src="/marlin-brand-logo.png" alt="" fill sizes="44px" className="object-cover transition duration-300 group-hover:scale-105" />
             <span className="absolute bottom-1 right-1 h-1.5 w-1.5 rounded-full bg-[#8bf4ad] shadow-[0_0_8px_#8bf4ad]" />
           </div>
           <div>

@@ -9,7 +9,10 @@ import "./globals.css"
 export const metadata: Metadata = {
   title: "MARLIN - Marine Analytics, Research, Linkage & Intelligence Network",
   description: "MARLIN marine analytics, biodiversity intelligence, research, and ocean monitoring network",
-    
+  icons: {
+    icon: "/marlin-brand-logo.png",
+    apple: "/marlin-brand-logo.png",
+  },
 }
 
 export default function RootLayout({

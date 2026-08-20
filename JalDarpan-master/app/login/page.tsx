@@ -2,8 +2,9 @@
 
 import { FormEvent, useState } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, LockKeyhole, Mail, Waves } from "lucide-react"
+import { ArrowRight, LockKeyhole, Mail } from "lucide-react"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -40,14 +41,14 @@ export default function LoginPage() {
         <section className="relative hidden overflow-hidden p-12 lg:block">
           <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full border-[24px] border-[#24d7ff]/10" />
           <div className="relative flex h-full flex-col justify-between">
-            <Link href="/" className="flex items-center gap-3"><span className="flex h-12 w-12 items-center justify-center rounded-full border border-[#24d7ff] font-display text-2xl font-bold italic text-[#24d7ff]">M</span><span className="font-display text-2xl font-bold">MARLIN</span></Link>
+            <Link href="/" className="flex items-center gap-3"><span className="relative h-14 w-14 overflow-hidden rounded-full shadow-[0_10px_30px_rgba(20,133,255,.25)] ring-1 ring-[#24d7ff]/30"><Image src="/marlin-brand-logo.png" alt="" fill sizes="56px" className="object-cover" /></span><span className="font-display text-2xl font-bold">MARLIN</span></Link>
             <div><p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-[#d8f36b]">Marine intelligence network</p><h1 className="max-w-md text-5xl font-bold leading-tight">Read the water<br /><span className="text-[#8fd4d0]">with clarity.</span></h1><p className="mt-6 max-w-md leading-7 text-[#9dbbc2]">Secure access to live stations, field surveys, ocean parameters, and predictive ecosystem signals.</p></div>
             <p className="text-xs text-[#6f929c]">MARLIN / Research operations workspace</p>
           </div>
         </section>
         <section className="bg-[#092b43] p-7 text-white sm:p-12">
           <div className="mx-auto max-w-sm">
-            <div className="mb-10 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#13c8d8] text-[#041827]"><Waves className="h-6 w-6" /></div>
+            <div className="relative mb-10 h-14 w-14 overflow-hidden rounded-full shadow-[0_10px_30px_rgba(20,133,255,.2)]"><Image src="/marlin-brand-logo.png" alt="MARLIN logo" fill sizes="56px" className="object-cover" /></div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#13c8d8]">Welcome back</p>
             <h2 className="mt-2 font-display text-3xl font-bold">Sign in to MARLIN</h2>
             <p className="mt-3 text-sm text-[#8fb6c4]">Use your research workspace credentials.</p>
