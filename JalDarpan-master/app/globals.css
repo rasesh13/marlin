@@ -1,0 +1,145 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #041827;
+  --foreground: #eaf7fa;
+  --card: #092b43;
+  --card-foreground: #eaf7fa;
+  --popover: #0b3a5b;
+  --popover-foreground: #eaf7fa;
+  --primary: #086fae;
+  --primary-foreground: #ffffff;
+  --secondary: #103f5d;
+  --secondary-foreground: #c9e7ed;
+  --muted: #0b3049;
+  --muted-foreground: #8fb6c4;
+  --accent: #13c8d8;
+  --accent-foreground: #041827;
+  --destructive: #e66f61;
+  --destructive-foreground: #ffffff;
+  --border: rgba(141, 205, 221, 0.18);
+  --input: #08263c;
+  --ring: #13c8d8;
+  /* Updated chart colors for better visual distinction like PowerBI */
+  --chart-1: #13c8d8;
+  --chart-2: #27d3c2;
+  --chart-3: #086fae;
+  --chart-4: #6c9fe8;
+  --chart-5: #f0b35a;
+  --chart-6: #88e0e8;
+  --chart-7: #e66f61;
+  --chart-8: #0b3a5b;
+  --radius: 0.5rem;
+  --sidebar: #062b49;
+  --sidebar-foreground: #eaf7fa;
+  --sidebar-primary: #13c8d8;
+  --sidebar-primary-foreground: #041827;
+  --sidebar-accent: #0b3a5b;
+  --sidebar-accent-foreground: #eaf7fa;
+  --sidebar-border: rgba(141, 205, 221, 0.18);
+  --sidebar-ring: #13c8d8;
+}
+
+.dark {
+  /* Dark theme kept for potential toggle */
+  --background: #041827;
+  --foreground: #eaf7fa;
+  --card: #092b43;
+  --card-foreground: #eaf7fa;
+  --popover: oklch(0.12 0.02 240);
+  --popover-foreground: oklch(0.95 0.01 240);
+  --primary: #13c8d8;
+  --primary-foreground: #041827;
+  --secondary: #103f5d;
+  --secondary-foreground: #eaf7fa;
+  --muted: #0b3049;
+  --muted-foreground: #8fb6c4;
+  --accent: #27d3c2;
+  --accent-foreground: #041827;
+  --destructive: #8e403d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(141, 205, 221, 0.18);
+  --input: #08263c;
+  --ring: #13c8d8;
+  /* Updated dark theme chart colors */
+  --chart-1: oklch(0.65 0.15 220);
+  --chart-2: oklch(0.75 0.18 160);
+  --chart-3: oklch(0.7 0.2 40);
+  --chart-4: oklch(0.55 0.15 280);
+  --chart-5: oklch(0.8 0.12 120);
+  --chart-6: oklch(0.6 0.2 320);
+  --chart-7: oklch(0.85 0.15 80);
+  --chart-8: oklch(0.5 0.18 200);
+  --sidebar: #062b49;
+  --sidebar-foreground: #eaf7fa;
+  --sidebar-primary: #13c8d8;
+  --sidebar-primary-foreground: #041827;
+  --sidebar-accent: #0b3a5b;
+  --sidebar-accent-foreground: #eaf7fa;
+  --sidebar-border: rgba(141, 205, 221, 0.18);
+  --sidebar-ring: #13c8d8;
+}
+
+@theme inline {
+  --font-sans: 'DM Sans', sans-serif;
+  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  /* Added additional chart color variables */
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    background-image: linear-gradient(180deg, rgba(8, 49, 73, 0.45), transparent 24rem);
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-sans);
+  }
+  .font-display {
+    font-family: var(--font-sans);
+  }
+}
